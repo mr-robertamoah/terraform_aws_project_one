@@ -1,0 +1,9 @@
+# Ignore all terraform.tfvars files in this directory and subdirectories
+**/terraform.tfvars
+
+infrastructure/.terraform
+infrastructure/.terraform.lock.hcl
+infrastructure/*.tfstate
+infrastructure/*.tfstate.backup
+
+git-filter-repo
