@@ -1,13 +1,24 @@
-resource "aws_security_group" "jumpstart_server_sg" {
-  name        = "${local.prefix}-jumps-start"
-  description = "Jumps start security group"
+resource "aws_security_group" "jump_server_sg" {
+  name        = "${local.prefix}-jump"
+  description = "Jump security group"
   vpc_id      = var.vpc_id
 
   tags = merge(
     local.tags,
     {
-      Name = "${local.prefix}-jumps-start"
+      Name = "${local.prefix}-jump-server"
     })
+  
+}
+
+# This rule allows inbound traffic on port 22 (SSH) from my Ip with a cidr of 16 to the jump server security group
+resource "aws_security_group_rule" "jump_server_sg_ssh_rule" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  security_group_id = aws_security_group.jump_server_sg.id
+  cidr_blocks        = [ local.myIp.cidr_block ]
   
 }
 
@@ -32,7 +43,7 @@ resource "aws_security_group_rule" "alb_sg_ssh_rule" {
   to_port           = 22
   protocol          = "tcp"
   security_group_id = aws_security_group.alb_sg.id
-  source_security_group_id = aws_security_group.jumpstart_server_sg.id
+  source_security_group_id = aws_security_group.jump_server_sg.id
   
 }
 
@@ -79,7 +90,7 @@ resource "aws_security_group_rule" "ecs_sg_ssh_rule" {
   to_port           = 22
   protocol          = "tcp"
   security_group_id = aws_security_group.ecs_sg.id
-  source_security_group_id = aws_security_group.jumpstart_server_sg.id
+  source_security_group_id = aws_security_group.jump_server_sg.id
   
 }
 
@@ -90,7 +101,7 @@ resource "aws_security_group_rule" "ecs_sg_http_rule" {
   to_port           = 80
   protocol          = "tcp"
   security_group_id = aws_security_group.ecs_sg.id
-  source_security_group_id = aws_security_group.jumpstart_server_sg.id
+  source_security_group_id = aws_security_group.jump_server_sg.id
   
 }
 
@@ -101,7 +112,7 @@ resource "aws_security_group_rule" "ecs_sg_https_rule" {
   to_port           = 443
   protocol          = "tcp"
   security_group_id = aws_security_group.ecs_sg.id
-  source_security_group_id = aws_security_group.jumpstart_server_sg.id
+  source_security_group_id = aws_security_group.jump_server_sg.id
   
 }
 
@@ -125,7 +136,7 @@ resource "aws_security_group_rule" "rds_sg_ssh_rule" {
   to_port           = 22
   protocol          = "tcp"
   security_group_id = aws_security_group.rds_sg.id
-  source_security_group_id = aws_security_group.jumpstart_server_sg.id
+  source_security_group_id = aws_security_group.jump_server_sg.id
   
 }
 
