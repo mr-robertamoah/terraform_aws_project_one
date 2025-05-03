@@ -1,6 +1,8 @@
 module "storage" {
   source = "./modules/01 - Storage"
   bucket_name = "robert-amoah-go-hard-or-go-home-storage-bucket"
+  project_name = var.project_name
+  environment = var.environment
 }
 
 module "network" {
@@ -11,5 +13,15 @@ module "network" {
   public_frontend_subnets = var.public_frontend_subnets
   private_backend_subnets = var.private_backend_subnets
   private_database_subnets = var.private_database_subnets
+  project_name = var.project_name
+  environment = var.environment
+}
+
+module "security" {
+  source = "./modules/03 - Security"
+  project_name = var.project_name
+  environment = var.environment
+  vpc_id = module.network.vpc_id
+  rds_engine = var.rds_engine
 }
 

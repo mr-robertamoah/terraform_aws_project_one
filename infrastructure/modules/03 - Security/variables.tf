@@ -8,13 +8,13 @@ variable "environment" {
   type        = string
 }
 
-variable "bucket_name" {
-  description = "the name of the s3 bucket meant for logging"
-  type = string
+variable "vpc_id" {
+  description = "The ID of the VPC."
+  type        = string
 }
 
-variable "enable_versioning" {
-  description = "enable versioning for the s3 bucket"
-  type = bool
-  default = false
+variable "rds_engine" {
+  description = "The RDS engine type (e.g., mysql, postgres)."
+  type        = string
+  
 }

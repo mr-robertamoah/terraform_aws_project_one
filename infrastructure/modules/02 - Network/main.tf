@@ -1,5 +1,3 @@
-data "aws_availability_zones" "azs" {}
-
 resource "aws_vpc" "vpc_network" {
   cidr_block = var.vpc_cidr
 
@@ -10,7 +8,7 @@ resource "aws_vpc" "vpc_network" {
   tags = merge(
     local.tags,
     {
-      Name = "${local.tags.Project}-vpc"
+      Name = "${local.prefix}-vpc"
   })
 }
 
@@ -20,7 +18,7 @@ resource "aws_internet_gateway" "igw_network" {
   tags = merge(
     local.tags,
     {
-      Name = "${local.tags.Project}-igw"
+      Name = "${local.prefix}-igw"
   })
 }
 
@@ -84,7 +82,7 @@ resource "aws_nat_gateway" "vpc_network_ng" {
   allocation_id = aws_eip.vpc_network_ng_eip[count.index].id
 
   tags = {
-      Name = "${local.tags.Project}-eip-${count.index}"
+      Name = "${local.tags.Project}-ng-${count.index}"
   }
 }
 

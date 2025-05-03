@@ -5,4 +5,6 @@ locals {
     Project = "AWS Terraform Project One" 
     Module = "Storage"
   }
+
+  prefix = "${var.project_name}-${var.environment}"
 }

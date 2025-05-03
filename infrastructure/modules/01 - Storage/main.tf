@@ -1,10 +1,10 @@
 resource "aws_s3_bucket" "s3_storage" {
-  bucket = var.bucket_name
+  bucket = "${local.prefix}-${var.bucket_name}"
 
   tags = merge(
     local.tags,
     {
-      Name        = var.bucket_name
+      Name        = "${local.prefix}-${var.bucket_name}"
     })
 }
 
