@@ -25,3 +25,14 @@ module "security" {
   rds_engine = var.rds_engine
 }
 
+module "iam" {
+  source = "./modules/04 - Iam"
+  project_name = var.project_name
+  environment = var.environment
+  ecs_execution_role_policy_arns = var.ecs_execution_role_policy_arns
+  ecs_task_execution_role_policy_arns = var.ecs_task_execution_role_policy_arns
+  ecs_task_role_policy_arns = var.ecs_task_role_policy_arns
+  jump_server_role_policy_arns = var.jump_server_role_policy_arns
+  s3_access_role_policy_arns = var.s3_access_role_policy_arns
+}
+

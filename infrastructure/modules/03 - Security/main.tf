@@ -9,6 +9,12 @@ resource "aws_security_group" "jump_server_sg" {
       Name = "${local.prefix}-jump-server"
     })
   
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [ "0.0.0.0/0" ]
+  }
 }
 
 # This rule allows inbound traffic on port 22 (SSH) from my Ip with a cidr of 16 to the jump server security group
@@ -33,6 +39,13 @@ resource "aws_security_group" "alb_sg" {
     {
       Name = "${local.prefix}-alb"
     })
+  
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [ "0.0.0.0/0" ]
+  }
   
 }
 
@@ -81,6 +94,13 @@ resource "aws_security_group" "ecs_sg" {
       Name = "${local.prefix}-ecs"
     })
   
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [ "0.0.0.0/0" ]
+  }
+  
 }
 
 # This rule allows inbound traffic on port 22 (SSH) from the jumpstart server security group to the ALB security group
@@ -127,6 +147,13 @@ resource "aws_security_group" "rds_sg" {
       Name = "${local.prefix}-rds"
     })
   
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [ "0.0.0.0/0" ]
+  }
+  
 }
 
 # This rule allows inbound traffic on port 22 (SSH) from the jumpstart server security group to the ALB security group
@@ -149,4 +176,37 @@ resource "aws_security_group_rule" "rds_sg_db_rule" {
   security_group_id = aws_security_group.rds_sg.id
   source_security_group_id = aws_security_group.ecs_sg.id
   
+}
+
+# Create and attach WAF to the ALB security group to block bad requests
+resource "aws_wafv2_web_acl" "waf" {
+  name        = "${local.prefix}-waf"
+  description = "WAF for ALB"
+  scope       = "REGIONAL"
+  default_action {
+    allow {}
+  }
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "${local.prefix}-waf"
+    sampled_requests_enabled    = true
+  }
+  rule {
+    name     = "rate-limit"
+    priority = 1
+    action {
+      count {}
+    }
+    statement {
+      rate_based_statement {
+        limit              = 1000
+        aggregate_key_type = "IP"
+      }
+    }
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "${local.prefix}-waf-rate-limit"
+      sampled_requests_enabled    = true
+    }
+  }
 }

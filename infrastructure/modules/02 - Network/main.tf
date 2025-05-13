@@ -32,7 +32,7 @@ resource "aws_subnet" "vpc_network_public_frontend_subnets" {
   tags = merge(
     local.tags,
     {
-      Name = "${local.tags.Project}-public-frontend-subnet-${count.index}"
+      Name = "${local.prefix}-public-frontend-subnet-${count.index}"
   })
 }
 
@@ -46,7 +46,7 @@ resource "aws_subnet" "vpc_network_private_backend_subnets" {
   tags = merge(
     local.tags,
     {
-      Name = "${local.tags.Project}-private-backend-subnet-${count.index}"
+      Name = "${local.prefix}-private-backend-subnet-${count.index}"
   })
 }
 
@@ -60,7 +60,7 @@ resource "aws_subnet" "vpc_network_private_database_subnets" {
   tags = merge(
     local.tags,
     {
-      Name = "${local.tags.Project}-private-database-subnet-${count.index}"
+      Name = "${local.prefix}-private-database-subnet-${count.index}"
   })
 }
 
@@ -70,7 +70,7 @@ resource "aws_eip" "vpc_network_ng_eip" {
   tags = merge(
     local.tags,
     {
-      Name = "${local.tags.Project}-eip-${count.index}"
+      Name = "${local.prefix}-eip-${count.index}"
   })
   
 }
@@ -82,7 +82,7 @@ resource "aws_nat_gateway" "vpc_network_ng" {
   allocation_id = aws_eip.vpc_network_ng_eip[count.index].id
 
   tags = {
-      Name = "${local.tags.Project}-ng-${count.index}"
+      Name = "${local.prefix}-ng-${count.index}"
   }
 }
 
@@ -90,7 +90,7 @@ resource "aws_route_table" "vpc_network_public_rt" {
     vpc_id = aws_vpc.vpc_network.id
 
     tags = {
-        Name = "${local.tags.Project}-public-rt"
+        Name = "${local.prefix}-public-rt"
     }
 }
 
@@ -100,7 +100,7 @@ resource "aws_route_table" "vpc_network_private_rt" {
   vpc_id = aws_vpc.vpc_network.id
 
   tags = {
-      Name = "${local.tags.Project}-private-rt-${count.index}"
+      Name = "${local.prefix}-private-rt-${count.index}"
   }
 }
 
